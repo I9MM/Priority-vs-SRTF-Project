@@ -1,0 +1,195 @@
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2c3e50;
+    --success-color: #2ecc71;
+    --danger-color: #e74c3c;
+    --bg-color: #f4f6f9;
+    --panel-bg: #ffffff;
+    --border-color: #ddd;
+}
+/* TA Interaction Styles */ 
+.team-branding {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.team-logo {
+    max-width: 300px; /* Smaller logo */
+    border-radius: 15px;
+    margin: 10px auto;
+    display: block;
+}
+.team-name {
+    font-size: 24px;
+    color: #2c3e50;
+}
+.ta-zone {
+    margin-top: 15px;
+    padding: 10px 20px; /* Smaller padding */
+    border: 2px dashed #3498db;
+    border-radius: 12px;
+    background: #f0f7ff;
+    display: inline-block;
+    text-align: center;
+}
+.grade-input {
+    width: 60px !important; /* Smaller input */
+    text-align: center;
+    font-weight: bold;
+    font-size: 16px;
+    border: 2px solid #3498db;
+    border-radius: 8px;
+}
+.tux-status {
+    font-weight: bold;
+    margin-top: 8px;
+    transition: all 0.3s ease;
+    font-size: 14px; /* Smaller text */
+}
+.tux-mood-img {
+    width: 80px; /* Smaller image */
+    height: auto;
+    display: block;
+    margin: 8px auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.happy { color: #27ae60; }
+.watching { color: #f39c12; }
+.angry { color: #e74c3c; font-size: 18px; text-transform: uppercase; }
+.team-slogan {
+    font-size: 16px; /* Smaller slogan */
+    color: #e74c3c;
+    font-weight: bold;
+    margin: 10px auto;
+    font-style: italic;
+    background: #fdf0ef;
+    padding: 6px 15px;
+    border-radius: 50px;
+    border: 1px dashed #e74c3c;
+    display: inline-block;
+}  
+body {
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+background-color: #f4f6f9;
+color: #333;
+margin: 0;
+padding: 20px;
+}
+.container {
+max-width: 1000px;
+margin: 0 auto;
+background: #ffffff;
+padding: 25px;
+border-radius: 8px;
+box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+border: 1px solid #ddd;
+}
+h1, h2, h3 { color: #2c3e50; margin-top: 0; }
+.panel {
+background: #fafbfc;
+border: 1px solid #e1e4e8;
+padding: 15px;
+margin-bottom: 20px;
+border-radius: 5px;
+}
+.input-group {
+display: inline-block;
+margin-right: 15px;
+margin-bottom: 10px;
+}
+.input-group label {
+display: block;
+font-size: 13px;
+font-weight: bold;
+margin-bottom: 5px;
+color: #555;
+}
+input, select {
+padding: 8px;
+border: 1px solid #ccc;
+border-radius: 4px;
+font-family: monospace;
+font-size: 13px;
+}
+input { width: 120px; }
+select { padding: 7px 8px; color: #333; background: #fff; }
+button {
+padding: 9px 15px;
+border: none;
+border-radius: 4px;
+cursor: pointer;
+font-weight: bold;
+color: white;
+transition: background 0.2s;
+}
+.btn-primary { background: #3498db; }
+.btn-primary:hover { background: #2980b9; }
+.btn-success { background: #2ecc71; margin-top: 15px; }
+.btn-success:hover { background: #27ae60; }
+.btn-danger { background: #e74c3c; }
+.btn-danger:hover { background: #c0392b; }
+.btn-secondary { background: #95a5a6; color: white; padding: 5px 10px; font-size: 12px; margin-right: 5px; }
+
+table {
+width: 100%;
+border-collapse: collapse;
+margin-top: 10px;
+background: white;
+}
+th, td {
+border: 1px solid #ddd;
+padding: 10px;
+text-align: center;
+}
+th {
+background-color: #f1f2f6;
+color: #2f3542;
+font-size: 14px;
+}
+td input {
+width: 60px;
+border: 1px solid #ddd;
+border-radius: 3px;
+padding: 5px 6px;
+font-size: 12px;
+text-align: center;
+background: #f9f9f9;
+}
+td input:focus { background: #fff; border-color: #3498db; outline: none; }
+td input.err { border-color: #e74c3c; background: #fdf0ef; }
+.del-btn {
+background: none; border: none; color: #aaa;
+cursor: pointer; font-size: 16px; padding: 2px 6px;
+border-radius: 4px; line-height: 1;
+}
+.del-btn:hover { color: #e74c3c; background: #fdf0ef; }
+
+/* Color dot */
+.clr { width: 10px; height: 10px; border-radius: 3px; display: inline-block; margin-right: 4px; vertical-align: middle; }
+
+/* Tabs */
+.tabs {
+display: flex;
+gap: 4px;
+margin-bottom: 20px;
+border-bottom: 2px solid #e1e4e8;
+padding-bottom: 0;
+}
+.tab-btn {
+padding: 8px 18px;
+background: none;
+border: none;
+border-bottom: 2px solid transparent;
+margin-bottom: -2px;
+color: #888;
+font-size: 14px;
+font-weight: bold;
+cursor: pointer;
+border-radius: 4px 4px 0 0;
+transition: all 0.15s;
+}
+.tab-btn:hover { color: #555; background: #f1f2f6; }
+.tab-btn.active { color: #2c3e50; border-bottom-color: #3498db; background: #fff; }
+
+.page { display: none; }
+.page.active { display: block; }
