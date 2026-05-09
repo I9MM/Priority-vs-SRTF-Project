@@ -42,6 +42,34 @@ function upd(id, field, val) {
   const p = procs.find(x => x.id === id);
   if (p) p[field] = val;
 }
+// ─── MEMBER 4: Gantt Chart & Validation -> Input Validation ──────────
+function validate() {
+  const errs = [];
+  document.querySelectorAll('#ptbody input').forEach(el => el.classList.remove('err'));
+  if (procs.length < 2) { errs.push('Need at least 2 processes.'); return errs; }
+  
+  const pidSet = new Set();
+  procs.forEach(p => {
+    if (!Number.isInteger(p.id) || p.id < 1) { 
+      errs.push(`PID must be a positive integer \u2265 1, got: ${p.id}`); 
+      const el = document.getElementById(`id-${p.id}`); 
+      if (el) el.classList.add('err'); 
+    }
+    if (pidSet.has(p.id)) { 
+      errs.push(`Duplicate PID detected: ${p.id}`); 
+      const el = document.getElementById(`id-${p.id}`); 
+      if (el) el.classList.add('err'); 
+    }
+    pidSet.add(p.id);
+  });
+  
+  procs.forEach(p => {
+    if (p.at < 0) { errs.push(`PID ${p.id}: Arrival Time cannot be negative.`); const el = document.getElementById(`at-${p.id}`); if (el) el.classList.add('err'); }
+    if (!Number.isInteger(p.bt) || p.bt < 1) { errs.push(`PID ${p.id}: Burst Time must be a positive integer \u2265 1.`); const el = document.getElementById(`bt-${p.id}`); if (el) el.classList.add('err'); }
+    if (!Number.isInteger(p.pri) || p.pri < 1) { errs.push(`PID ${p.id}: Priority must be a positive integer \u2265 1.`); const el = document.getElementById(`pri-${p.id}`); if (el) el.classList.add('err'); }
+  });
+  return errs;
+}
 
 
 // ─── MEMBER 2: Priority Scheduling -> Preemptive Priority Logic ───────> Michael
