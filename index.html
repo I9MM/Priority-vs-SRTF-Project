@@ -9,7 +9,68 @@
 <body>
 
 <div class="container">
-    <div class="page" id="page-results">
+<div class="team-branding">
+        <div class="branding-content">
+            <h2 class="team-name">تيم البطريق العضاض</h2>
+            <img src="../7bd87511b796d481f5f6f55fd4d2deb0.jpg" alt="" class="team-logo">
+			            <p class="team-slogan"> البطريق Tux <br> يحب ال 20/20 </p>
+        </div>
+    </div>
+<div class="panel">
+    <h2>1. Input Processes</h2>
+    <div style="margin-bottom:15px;">
+      <button class="btn-secondary" onclick="loadSc('A', this)">Load Scenario: A — Mixed</button>
+      <button class="btn-secondary" onclick="loadSc('B', this)">Load Scenario: B — Conflict</button>
+      <button class="btn-secondary" onclick="loadSc('C', this)">Load Scenario: C — Starvation</button>
+      <button class="btn-secondary" onclick="loadSc('D', this)">Load Scenario: D — Validation</button>
+    </div>
+
+    <div style="margin-bottom:12px;">
+      <div class="input-group">
+        <label>Priority Direction</label>
+        <div style="font-size: 13px; font-weight: bold; color: #2c3e50; padding: 8px 0;">Lower number = higher priority</div>
+      </div>
+      <div class="input-group">
+        <label>Tie-Breaking Rule</label>
+        <div style="font-size: 13px; font-weight: bold; color: #2c3e50; padding: 8px 0;">Arrival time (FCFS)</div>
+      </div>
+    </div>
+
+    <div id="error-msg" class="error"></div>
+
+<table id="processTable">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Process ID (PID)</th>
+          <th>Arrival Time (AT)</th>
+          <th>Burst Time (BT)</th>
+          <th>Priority (Pri)</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody id="ptbody"></tbody>
+    </table>
+
+    <div style="margin-top:12px; display:flex; gap:8px; align-items:center;">
+      <button class="btn-primary" onclick="addProc()">+ Add Process</button>
+      <button class="btn-danger" onclick="clearAll()">Clear All</button>
+      <button class="btn-success" style="margin-top:0;" onclick="runSim()">▶ Run Simulation</button>
+    </div>
+  </div>
+
+  <!-- Results Section -->
+  <div id="results" style="display:none;">
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="goTab('gantt', this)">Gantt Chart</button>
+      <button class="tab-btn" onclick="goTab('results', this)">Results</button>
+      <button class="tab-btn" onclick="goTab('compare', this)">Comparison</button>
+      <button class="tab-btn" onclick="goTab('analysis', this)">Analysis</button>
+    </div>
+
+<div class="page" id="page-results">
       <div class="two-col">
         <div class="panel">
           <h2 style="color:#2980b9; font-size:16px;">Priority Results <span class="algo-tag tag-pr">PR</span></h2>
@@ -21,8 +82,3 @@
         </div>
       </div>
     </div>
-
-
-<script src="script.js"></script>
-</body>
-</html>
