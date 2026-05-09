@@ -1,10 +1,105 @@
-.gantt-wrapper { margin: 15px 0; overflow-x: auto; }
-.gantt-chart {
-display: flex;
-border: 2px solid #2c3e50;
-height: 40px;
-background: #fff;
-min-width: max-content;
+/* 
+  Member 1: UI/UX Developer -> UI/UX Foundation
+  Key Tasks: Responsive layout, CSS variables, base styling for panels, tables, and buttons.
+*/
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2c3e50;
+    --success-color: #2ecc71;
+    --danger-color: #e74c3c;
+    --bg-color: #f4f6f9;
+    --panel-bg: #ffffff;
+    --border-color: #ddd;
+}
+/* TA Interaction Styles */ 
+.team-branding {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.team-logo {
+    max-width: 300px; /* Smaller logo */
+    border-radius: 15px;
+    margin: 10px auto;
+    display: block;
+}
+.team-name {
+    font-size: 24px;
+    color: #2c3e50;
+}
+.ta-zone {
+    margin-top: 15px;
+    padding: 10px 20px; /* Smaller padding */
+    border: 2px dashed #3498db;
+    border-radius: 12px;
+    background: #f0f7ff;
+    display: inline-block;
+    text-align: center;
+}
+.grade-input {
+    width: 60px !important; /* Smaller input */
+    text-align: center;
+    font-weight: bold;
+    font-size: 16px;
+    border: 2px solid #3498db;
+    border-radius: 8px;
+}
+.tux-status {
+    font-weight: bold;
+    margin-top: 8px;
+    transition: all 0.3s ease;
+    font-size: 14px; /* Smaller text */
+}
+.tux-mood-img {
+    width: 80px; /* Smaller image */
+    height: auto;
+    display: block;
+    margin: 8px auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.happy { color: #27ae60; }
+.watching { color: #f39c12; }
+.angry { color: #e74c3c; font-size: 18px; text-transform: uppercase; }
+.team-slogan {
+    font-size: 16px; /* Smaller slogan */
+    color: #e74c3c;
+    font-weight: bold;
+    margin: 10px auto;
+    font-style: italic;
+    background: #fdf0ef;
+    padding: 6px 15px;
+    border-radius: 50px;
+    border: 1px dashed #e74c3c;
+    display: inline-block;
+}  
+body {
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+background-color: #f4f6f9;
+color: #333;
+margin: 0;
+padding: 20px;
+}
+.container {
+max-width: 1000px;
+margin: 0 auto;
+background: #ffffff;
+padding: 25px;
+border-radius: 8px;
+box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+border: 1px solid #ddd;
+}
+h1, h2, h3 { color: #2c3e50; margin-top: 0; }
+.panel {
+background: #fafbfc;
+border: 1px solid #e1e4e8;
+padding: 15px;
+margin-bottom: 20px;
+border-radius: 5px;
+}
+.input-group {
+display: inline-block;
+margin-right: 15px;
+margin-bottom: 10px;
 }
 .gantt-block {
 display: flex;

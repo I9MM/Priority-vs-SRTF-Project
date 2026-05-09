@@ -6,11 +6,39 @@
 <title>C1 — Priority vs SRTF Scheduler</title>
 <link rel="stylesheet" href="style.css">
 </head>
+
+
 <body>
    
 <div id="error-msg" class="error"></div>
 
-<div class="page active" id="page-gantt">
+<div class="container">
+
+    <div class="page" id="page-results">
+      <div class="two-col">
+        <div class="panel">
+          <h2 style="color:#2980b9; font-size:16px;">Priority Results <span class="algo-tag tag-pr">PR</span></h2>
+          <table class="rtable" id="pr-rtable" style="font-size:12px; font-family:monospace;"></table>
+        </div>
+        <div class="legend" id="pr-leg"></div>
+        <div class="starv-warn" id="pr-starv">⚠ Starvation risk detected — a low-priority process waited significantly longer than average.</div>
+      </div>
+
+      <div class="panel">
+        <h2 style="color:#d35400;">
+          SRTF
+          <span class="algo-tag tag-sf">Preemptive</span>
+          <span style="font-size:12px; color:#888; font-weight:normal; margin-left:8px;">shortest remaining time first</span>
+        </h2>
+        <div class="gantt-wrapper">
+          <div id="sf-gantt" class="gantt-chart"></div>
+          <div id="sf-ticks" class="gantt-timeline"></div>
+        </div>
+        <div class="legend" id="sf-leg"></div>
+      </div>
+    </div>
+    <!-- Member 4: Gantt Chart Visualization Section -->
+    <div class="page active" id="page-gantt">
       <div class="panel">
         <h2 style="color:#2980b9;">
           Priority Scheduling
@@ -38,7 +66,28 @@
         <div class="legend" id="sf-leg"></div>
       </div>
     </div>
+        <!-- Member 5: Comparative Analysis Visuals -->
+    <div class="page" id="page-compare">
+      <div class="panel">
+        <h2 style="font-size:16px;">Average Metrics Comparison</h2>
+        <div class="cmp-grid" id="cmp-grid"></div>
+      </div>
+      <div class="panel">
+        <h2 style="font-size:16px;">Per-Process Waiting Time</h2>
+        <div id="wt-bars"></div>
+      </div>
+    </div>
 
+        <!-- Member 6: Analysis Questions & Final Conclusion (Technical Writer) -->
+    <div class="page" id="page-analysis">
+      <div class="panel">
+        <h2 style="font-size:16px;">Analysis Questions</h2>
+        <div id="aq-container"></div>
+      </div>
+      <div class="conc-card" id="conc-card"></div>
+    </div>
+
+  </div><!-- /results -->
 
 <script src="script.js"></script>
 </body>
