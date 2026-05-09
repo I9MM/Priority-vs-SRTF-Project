@@ -1,31 +1,273 @@
+/* 
+  Member 5: Data Analyst & Testing -> Scenarios & Comparative Analysis
+  Key Tasks: Scenario preparation (A, B, C), Comparison Tables, fair workload verification.
+*/
+const PAL = [
+  '#e74c3c','#2980b9','#27ae60','#f39c12','#8e44ad',
+  '#16a085','#d35400','#2c3e50','#c0392b','#1a5276'
+];
+
+// ─── STATE ──────────────────────────────────────────────────────────────
+let procs = [];
+let pidCounter = 1;
+
+// ─── SCENARIOS ──────────────────────────────────────────────────────────
+const SC = {
+  A: { prule:'lower', procs:[
+    {at:0, bt:8, pri:3},
+    {at:1, bt:4, pri:1},
+    {at:2, bt:9, pri:4},
+    {at:3, bt:5, pri:2},
+    {at:5, bt:2, pri:5},
+  ]},
+  B: { prule:'lower', procs:[
+    {at:0, bt:12,pri:1},
+    {at:2, bt:2, pri:4},
+    {at:3, bt:3, pri:3},
+    {at:5, bt:1, pri:5},
+  ]},
+  C: { prule:'lower', procs:[
+    {at:0, bt:3, pri:1},
+    {at:0, bt:3, pri:1},
+    {at:0, bt:3, pri:1},
+    {at:0, bt:10,pri:5},
+    {at:2, bt:3, pri:1},
+  ]},
+  D: { prule:'lower', procs:[
+    {at:0,  bt:5,  pri:2},
+    {at:0,  bt:3,  pri:1},
+    {at:2,  bt:4,  pri:3},
+    {at:1,  bt:6,  pri:4},
+  ]}
+};
+
+function loadSc(id, btn) {
+  const s = SC[id];
+  procs = []; pidCounter = 1;
+  s.procs.forEach(p => procs.push({id: pidCounter++, ...p}));
+  renderTable();
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('error-msg').innerText = '';
+}
+
+// ─── TABLE ──────────────────────────────────────────────────────────────
+// ─── MEMBER 1: UI/UX Developer -> Input Panel Logic ──────────────────
+function addProc() {
+  procs.push({id: pidCounter++, at:0, bt:5, pri:1});
+  renderTable();
+}
+
+function removeProc(idx) {
+  procs.splice(idx, 1);
+  renderTable();
+}
+
+function clearAll() {
+  procs = [];
+  pidCounter = 1;
+  renderTable();
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('error-msg').innerText = '';
+}
+
+function renderTable() {
+  const tb = document.getElementById('ptbody');
+  if (procs.length === 0) {
+    tb.innerHTML = '<tr><td colspan="6" style="color:#999;">No processes added yet.</td></tr>';
+    return;
+  }
+  tb.innerHTML = '';
+  procs.forEach((p, i) => {
+    const c = PAL[i % PAL.length];
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><span class="clr" style="background:${c}"></span></td>
+      <td><input type="number" value="${p.id}"  onchange="upd(${i},'id',this.value)"  id="id-${p.id}" style="width:60px;"></td>
+      <td><input type="number" value="${p.at}"  onchange="upd(${i},'at',this.value)"  id="at-${p.id}"></td>
+      <td><input type="number" value="${p.bt}"  onchange="upd(${i},'bt',this.value)"  id="bt-${p.id}"></td>
+      <td><input type="number" value="${p.pri}" onchange="upd(${i},'pri',this.value)" id="pri-${p.id}"></td>
+      <td><button class="del-btn" onclick="removeProc(${i})">\u00d7</button></td>
+    `;
+    tb.appendChild(tr);
+  });
+}
+
+function upd(idx, field, val) {
+  const p = procs[idx];
+  if (p) {
+    if (val === "") {
+      p[field] = NaN;
+    } else {
+      const num = Number(val);
+      if (!Number.isInteger(num)) {
+        p[field] = 0.5; // Trigger validation
+      } else {
+        p[field] = num;
+      }
+    }
+  }
+}
+
+// ─── MEMBER 4: Gantt Chart & Validation -> Input Validation ──────────
 function validate() {
   const errs = [];
   document.querySelectorAll('#ptbody input').forEach(el => el.classList.remove('err'));
   if (procs.length < 2) { errs.push('Need at least 2 processes.'); return errs; }
   
   const pidSet = new Set();
-  procs.forEach(p => {
-    if (!Number.isInteger(p.id) || p.id < 1) { 
-      errs.push(`PID must be a positive integer \u2265 1, got: ${p.id}`); 
-      const el = document.getElementById(`id-${p.id}`); 
-      if (el) el.classList.add('err'); 
+  procs.forEach((p, i) => {
+    const row = document.getElementById('ptbody').rows[i];
+    const inputs = row.querySelectorAll('input');
+    const elId = inputs[0], elAt = inputs[1], elBt = inputs[2], elPri = inputs[3];
+
+    if (isNaN(p.id) || !Number.isInteger(p.id) || p.id < 1) { 
+      errs.push(`PID must be a positive integer \u2265 1.`); 
+      if (elId) elId.classList.add('err'); 
     }
     if (pidSet.has(p.id)) { 
       errs.push(`Duplicate PID detected: ${p.id}`); 
-      const el = document.getElementById(`id-${p.id}`); 
-      if (el) el.classList.add('err'); 
+      if (elId) elId.classList.add('err'); 
     }
     pidSet.add(p.id);
-  });
-  
-  procs.forEach(p => {
-    if (p.at < 0) { errs.push(`PID ${p.id}: Arrival Time cannot be negative.`); const el = document.getElementById(`at-${p.id}`); if (el) el.classList.add('err'); }
-    if (!Number.isInteger(p.bt) || p.bt < 1) { errs.push(`PID ${p.id}: Burst Time must be a positive integer \u2265 1.`); const el = document.getElementById(`bt-${p.id}`); if (el) el.classList.add('err'); }
-    if (!Number.isInteger(p.pri) || p.pri < 1) { errs.push(`PID ${p.id}: Priority must be a positive integer \u2265 1.`); const el = document.getElementById(`pri-${p.id}`); if (el) el.classList.add('err'); }
+
+    if (isNaN(p.at)) {
+      errs.push(`Process ${i+1}: Arrival Time is missing or invalid.`);
+      if (elAt) elAt.classList.add('err');
+    } else if (!Number.isInteger(p.at) || p.at < 0) { 
+      errs.push(`Process ${i+1}: Arrival Time must be a non-negative integer.`); 
+      if (elAt) elAt.classList.add('err'); 
+    }
+
+    if (isNaN(p.bt)) {
+      errs.push(`Process ${i+1}: Burst Time is missing or invalid.`);
+      if (elBt) elBt.classList.add('err');
+    } else if (!Number.isInteger(p.bt) || p.bt < 1) { 
+      errs.push(`Process ${i+1}: Burst Time must be a positive integer \u2265 1.`); 
+      if (elBt) elBt.classList.add('err'); 
+    }
+
+    if (isNaN(p.pri)) {
+      errs.push(`Process ${i+1}: Priority is missing or invalid.`);
+      if (elPri) elPri.classList.add('err');
+    } else if (!Number.isInteger(p.pri) || p.pri < 1) { 
+      errs.push(`Process ${i+1}: Priority must be a positive integer \u2265 1.`); 
+      if (elPri) elPri.classList.add('err'); 
+    }
   });
   return errs;
 }
 
+// ─── MEMBER 2: Priority Scheduling -> Preemptive Priority Logic ───────
+function simPriority(ps, rule, tieRule) {
+  const rem = {}, ft = {}, wt = {}, tat = {}, rt = {}, first = {};
+  const gantt = [];
+  const done = new Set();
+  ps.forEach(p => rem[p.id] = p.bt);
+  
+  let t = 0;
+  let last = null;
+  const totalBT = ps.reduce((s, p) => s + p.bt, 0);
+  const maxT = totalBT + Math.max(...ps.map(p => p.at)) + 100;
+
+  while (done.size < ps.length && t < maxT) {
+    const avail = ps.filter(p => p.at <= t && !done.has(p.id));
+    
+    if (!avail.length) {
+      const remaining = ps.filter(p => !done.has(p.id));
+      const nextAt = Math.min(...remaining.map(p => p.at));
+      if (gantt.length && gantt[gantt.length - 1].pid === 'idle') {
+        gantt[gantt.length - 1].end = nextAt;
+      } else {
+        gantt.push({ pid: 'idle', start: t, end: nextAt });
+      }
+      t = nextAt;
+      last = null;
+      continue;
+    }
+
+    avail.sort((a, b) => {
+      const pa = rule === 'lower' ? a.pri : -a.pri;
+      const pb = rule === 'lower' ? b.pri : -b.pri;
+      if (pa !== pb) return pa - pb;
+      // Tie-breaking: FCFS based on Arrival Time
+      if (tieRule === 'fcfs') {
+        if (a.at !== b.at) return a.at - b.at;
+      }
+      return a.id - b.id;
+    });
+
+    const p = avail[0];
+    if (!(p.id in first)) first[p.id] = t;
+    
+    if (last !== p.id) {
+      gantt.push({ pid: p.id, start: t, end: t + 1 });
+      last = p.id;
+    } else {
+      gantt[gantt.length - 1].end++;
+    }
+
+    rem[p.id]--;
+    t++;
+
+    if (rem[p.id] === 0) {
+      ft[p.id] = t;
+      done.add(p.id);
+      last = null;
+    }
+  }
+
+  // Merge contiguous segments for better visualization
+  const merged = [];
+  gantt.forEach(seg => {
+    if (merged.length && merged[merged.length - 1].pid === seg.pid && merged[merged.length - 1].end === seg.start) {
+      merged[merged.length - 1].end = seg.end;
+    } else {
+      merged.push({ ...seg });
+    }
+  });
+
+  ps.forEach(p => {
+    rt[p.id] = first[p.id] - p.at;
+    tat[p.id] = ft[p.id] - p.at;
+    wt[p.id] = tat[p.id] - p.bt;
+  });
+
+  return { gantt: merged, ft, wt, tat, rt };
+}
+
+// ─── MEMBER 3: SRTF -> Shortest Remaining Time First Logic ────────────
+function simSRTF(ps) {
+  const rem = {}, ft = {}, wt = {}, tat = {}, rt = {};
+  const first = {}; const gantt = [];
+  ps.forEach(p => rem[p.id] = p.bt);
+  let t = 0; const done = new Set(); let last = null;
+  let maxT = ps.reduce((s,p)=>s+p.bt,0) + Math.max(...ps.map(p=>p.at)) + 10;
+  while (done.size < ps.length && t <= maxT) {
+    const avail = ps.filter(p => p.at<=t && !done.has(p.id));
+    if (!avail.length) {
+      const nextAt = Math.min(...ps.filter(p=>!done.has(p.id)).map(p=>p.at));
+      if (gantt.length && gantt[gantt.length-1].pid==='idle') gantt[gantt.length-1].end = nextAt;
+      else gantt.push({pid:'idle',start:t,end:nextAt});
+      t = nextAt; last=null; continue;
+    }
+    avail.sort((a,b) => rem[a.id]-rem[b.id] || a.at-b.at || a.id-b.id);
+    const p = avail[0];
+    if (!(p.id in first)) first[p.id] = t;
+    if (last !== p.id) { gantt.push({pid:p.id,start:t,end:t+1}); last = p.id; }
+    else { gantt[gantt.length-1].end++; }
+    rem[p.id]--; t++;
+    if (rem[p.id]===0) { ft[p.id] = t; done.add(p.id); }
+  }
+  const merged = [];
+  gantt.forEach(seg => {
+    if (merged.length && merged[merged.length-1].pid===seg.pid && merged[merged.length-1].end===seg.start) merged[merged.length-1].end = seg.end;
+    else merged.push({...seg});
+  });
+  ps.forEach(p => { rt[p.id]=first[p.id]-p.at; tat[p.id]=ft[p.id]-p.at; wt[p.id]=tat[p.id]-p.bt; });
+  return {gantt:merged,ft,wt,tat,rt};
+}
+
+// ─── MEMBER 4: Gantt Chart -> Visualization Logic ──────────────────
 function renderGantt(gantt, ps, barId, ticksId, legId) {
   const bar = document.getElementById(barId);
   const tksEl = document.getElementById(ticksId);
@@ -52,7 +294,16 @@ function renderGantt(gantt, ps, barId, ticksId, legId) {
     const sp = document.createElement('span');
     sp.className = 'timeline-tick';
     sp.style.left = (t*scale)+'px';
-    sp.textContent = t;
+    sp.style.direction = 'ltr';
+    sp.setAttribute('lang', 'en');
+    sp.style.fontFamily = 'Arial, sans-serif';
+    sp.textContent = t.toString();
+    
+    // Prevent clipping of the first tick by overflow-x: auto
+    if (t === 0) {
+      sp.style.transform = 'translateX(0)';
+    }
+    
     tksEl.appendChild(sp);
   });
   ps.forEach((p,i) => {
@@ -62,65 +313,33 @@ function renderGantt(gantt, ps, barId, ticksId, legId) {
     legEl.appendChild(li);
   });
 }
-// ─── MEMBER 4: Gantt Chart & Validation -> Input Validation ──────────
-function validate() {
-  const errs = [];
-  document.querySelectorAll('#ptbody input').forEach(el => el.classList.remove('err'));
-  if (procs.length < 2) { errs.push('Need at least 2 processes.'); return errs; }
-  
-  const pidSet = new Set();
-  procs.forEach(p => {
-    if (!Number.isInteger(p.id) || p.id < 1) { 
-      errs.push(`PID must be a positive integer \u2265 1, got: ${p.id}`); 
-      const el = document.getElementById(`id-${p.id}`); 
-      if (el) el.classList.add('err'); 
-    }
-    if (pidSet.has(p.id)) { 
-      errs.push(`Duplicate PID detected: ${p.id}`); 
-      const el = document.getElementById(`id-${p.id}`); 
-      if (el) el.classList.add('err'); 
-    }
-    pidSet.add(p.id);
+
+// ─── MEMBER 1: UI/UX Developer -> Metric Results Table Rendering ─────
+function renderRTable(tableId, ps, res) {
+  const tbl = document.getElementById(tableId);
+  tbl.innerHTML = `<thead><tr>
+    <th>PID</th><th>AT</th><th>BT</th><th>Pri</th>
+    <th>FT</th><th>WT</th><th>TAT</th><th>RT</th>
+  </tr></thead>`;
+  const tb = document.createElement('tbody');
+  let sWT=0, sTAT=0, sRT=0;
+  ps.forEach(p => {
+    sWT+=res.wt[p.id]; sTAT+=res.tat[p.id]; sRT+=res.rt[p.id];
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><strong>${p.id}</strong></td><td>${p.at}</td><td>${p.bt}</td><td>${p.pri}</td>
+      <td>${res.ft[p.id]}</td><td>${res.wt[p.id]}</td><td>${res.tat[p.id]}</td><td>${res.rt[p.id]}</td>`;
+    tb.appendChild(tr);
   });
-  
-  procs.forEach(p => {
-    if (p.at < 0) { errs.push(`PID ${p.id}: Arrival Time cannot be negative.`); const el = document.getElementById(`at-${p.id}`); if (el) el.classList.add('err'); }
-    if (!Number.isInteger(p.bt) || p.bt < 1) { errs.push(`PID ${p.id}: Burst Time must be a positive integer \u2265 1.`); const el = document.getElementById(`bt-${p.id}`); if (el) el.classList.add('err'); }
-    if (!Number.isInteger(p.pri) || p.pri < 1) { errs.push(`PID ${p.id}: Priority must be a positive integer \u2265 1.`); const el = document.getElementById(`pri-${p.id}`); if (el) el.classList.add('err'); }
-  });
-  return errs;
+  const n = ps.length;
+  const aWT=(sWT/n).toFixed(2), aTAT=(sTAT/n).toFixed(2), aRT=(sRT/n).toFixed(2);
+  const ar = document.createElement('tr');
+  ar.style.background = '#f1f2f6'; ar.style.fontWeight = 'bold';
+  ar.innerHTML = `<td colspan="4">Average</td><td>\u2014</td><td>${aWT}</td><td>${aTAT}</td><td>${aRT}</td>`;
+  tb.appendChild(ar); tbl.appendChild(tb);
+  return {avgWT:+aWT, avgTAT:+aTAT, avgRT:+aRT};
 }
 
-
-// ─── MEMBER 2: Priority Scheduling -> Preemptive Priority Logic ───────> Michael
-function simPriority(ps, rule, tieRule) {
-  const rem = {}, ft = {}, wt = {}, tat = {}, rt = {};
-  const gantt = [];
-  const done = new Set();
-  ps.forEach(p => rem[p.id] = p.bt);
-  let t = 0, iter = 0, maxIter = ps.reduce((s,p)=>s+p.bt,0)*2+200;
-  while (done.size < ps.length && iter++ < maxIter) {
-    const avail = ps.filter(p => p.at <= t && !done.has(p.id));
-    if (!avail.length) {
-      const nextAt = Math.min(...ps.filter(p=>!done.has(p.id)).map(p=>p.at));
-      gantt.push({pid:'idle',start:t,end:nextAt}); t = nextAt; continue;
-    }
-    avail.sort((a,b) => {
-      const pa = rule==='lower' ? a.pri : -a.pri;
-      const pb = rule==='lower' ? b.pri : -b.pri;
-      if (pa!==pb) return pa-pb;
-      return tieRule==='fcfs' ? a.at-b.at||a.id-b.id : a.id-b.id;
-    });
-    const p = avail[0];
-    rt[p.id] = t - p.at;
-    gantt.push({pid:p.id,start:t,end:t+p.bt});
-    t += p.bt; ft[p.id] = t; done.add(p.id);
-    tat[p.id] = ft[p.id] - p.at; wt[p.id] = tat[p.id] - p.bt;
-  }
-  return {gantt,ft,wt,tat,rt};
-}
-
-// ─── MEMBER 5: Data Analyst -> Comparative Analysis Results Rendering ──────> Ganna
+// ─── MEMBER 5: Data Analyst -> Comparative Analysis Results Rendering ─
 function renderCompare(ps, prAvg, sfAvg, prRes, sfRes) {
   const grid = document.getElementById('cmp-grid');
   grid.innerHTML = '';
@@ -163,7 +382,6 @@ function renderCompare(ps, prAvg, sfAvg, prRes, sfRes) {
     wtDiv.appendChild(row);
   });
 }
-
 
 // ─── ANALYSIS RENDER ─────────────────────────────────────────────────────
 // ─── MEMBER 6: Technical Writer & QA -> Analysis Questions & Conclusion ─
@@ -252,31 +470,6 @@ function goTab(name, btn) {
   document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
   if (btn) btn.classList.add('active');
-}
-
-function updateTuxMood() {
-  const grade = document.getElementById('ta-grade').value;
-  const moodContainer = document.getElementById('tux-mood-container');
-  const moodText = document.getElementById('tux-mood-text');
-  const moodImg = document.getElementById('tux-mood-img');
-
-  if (grade === "") {
-    moodText.innerText = "\u0627\u0644\u0628\u0637\u0631\u064a\u0642 Tux \u0641\u064a \u0627\u0646\u062a\u0638\u0627\u0631 \u062a\u0642\u064a\u0645\u0643 \u0644\u064a\u0647 \u064a\u0628\u0645\u0634\u0647\u0646\u062f\u0633/\u0629";
-    moodImg.src = "../9171b332c6a0258d4ed3dd104e584eaa.jpg";
-    moodContainer.className = "tux-status";
-  } else if (grade >= 20) {
-    moodText.innerText = "\u0627\u0644\u0628\u0637\u0631\u064a\u0642 TUX \u0634\u0639\u0631 \u0628\u0633\u0639\u0627\u062f\u0629 \u0648\u064a\u0631\u0627\u0643 \u0642\u062f\u0648\u062a\u0647";
-    moodImg.src = "../6d4c3664d281859ef39c325565de380f.jpg";
-    moodContainer.className = "tux-status happy";
-  } else if (grade >= 15) {
-    moodText.innerHTML = "\u0627\u0644\u0628\u0637\u0631\u064a\u0642 Tux \u064a\u063a\u0646\u064a \u0648\u0647\u0648\u0627 \u064a\u0634\u0639\u0631 \u0628\u064a \u0627\u0644\u062d\u0632\u0646 <br> \u0645\u0643\u0646\u0634 \u0639\u0634\u0645\u064a \u0643\u062f\u0627 \u064a\u0637\u064a\u0631\u064a ";
-    moodImg.src = "../98a2444e6c84165e2dd09e7aa8f42cde.jpg";
-    moodContainer.className = "tux-status watching";
-  } else {
-    moodText.innerText = "\u0627\u0644\u0628\u0637\u0631\u064a\u0642 \u064a\u0631\u064a\u062f \u0627\u0644\u0627\u0646\u062a\u062d\u0627\u0621 Tux";
-    moodImg.src = "../0801be6ac485b63e98f86127f6b9d6bb.jpg";
-    moodContainer.className = "tux-status angry";
-  }
 }
 
 renderTable();
