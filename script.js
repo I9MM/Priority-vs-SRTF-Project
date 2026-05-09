@@ -1,3 +1,56 @@
+/* 
+  Member 5: Data Analyst & Testing -> Scenarios & Comparative Analysis
+  Key Tasks: Scenario preparation (A, B, C), Comparison Tables, fair workload verification.
+*/
+const PAL = [
+  '#e74c3c','#2980b9','#27ae60','#f39c12','#8e44ad',
+  '#16a085','#d35400','#2c3e50','#c0392b','#1a5276'
+];
+
+// ─── STATE ──────────────────────────────────────────────────────────────
+let procs = [];
+let pidCounter = 1;
+
+// ─── SCENARIOS ──────────────────────────────────────────────────────────
+const SC = {
+  A: { prule:'lower', procs:[
+    {at:0, bt:8, pri:3},
+    {at:1, bt:4, pri:1},
+    {at:2, bt:9, pri:4},
+    {at:3, bt:5, pri:2},
+    {at:5, bt:2, pri:5},
+  ]},
+  B: { prule:'lower', procs:[
+    {at:0, bt:12,pri:1},
+    {at:2, bt:2, pri:4},
+    {at:3, bt:3, pri:3},
+    {at:5, bt:1, pri:5},
+  ]},
+  C: { prule:'lower', procs:[
+    {at:0, bt:3, pri:1},
+    {at:0, bt:3, pri:1},
+    {at:0, bt:3, pri:1},
+    {at:0, bt:10,pri:5},
+    {at:2, bt:3, pri:1},
+  ]},
+  D: { prule:'lower', procs:[
+    {at:0,  bt:5,  pri:2},
+    {at:0,  bt:3,  pri:1},
+    {at:2,  bt:4,  pri:3},
+    {at:1,  bt:6,  pri:4},
+  ]}
+};
+
+function loadSc(id, btn) {
+  const s = SC[id];
+  procs = []; pidCounter = 1;
+  s.procs.forEach(p => procs.push({id: pidCounter++, ...p}));
+  renderTable();
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('error-msg').innerText = '';
+}
+
+
 function addProc() {
   procs.push({id: pidCounter++, at:0, bt:5, pri:1});
   renderTable();
