@@ -71,3 +71,47 @@ function simPriority(ps, rule, tieRule) {
   }
   return {gantt,ft,wt,tat,rt};
 }
+
+// ─── MEMBER 5: Data Analyst -> Comparative Analysis Results Rendering ──────> Ganna
+function renderCompare(ps, prAvg, sfAvg, prRes, sfRes) {
+  const grid = document.getElementById('cmp-grid');
+  grid.innerHTML = '';
+  const metrics = [
+    {lbl:'AVG WAITING TIME', pr:prAvg.avgWT, sf:sfAvg.avgWT},
+    {lbl:'AVG TURNAROUND TIME', pr:prAvg.avgTAT, sf:sfAvg.avgTAT},
+    {lbl:'AVG RESPONSE TIME', pr:prAvg.avgRT, sf:sfAvg.avgRT},
+  ];
+  metrics.forEach(m => {
+    const prWins = m.pr <= m.sf;
+    const total = m.pr+m.sf||1;
+    const prPct = Math.round(m.sf/total*100);
+    const card = document.createElement('div');
+    card.className = 'cmp-card';
+    card.innerHTML = `
+      <div class="cc-lbl">${m.lbl}</div>
+      <div class="cc-row"><span class="cc-name">Priority</span><span class="cc-num cc-pr">${m.pr.toFixed(2)}${prWins?' \u2713':''}</span></div>
+      <div class="cc-row"><span class="cc-name">SRTF</span><span class="cc-num cc-sf">${m.sf.toFixed(2)}${!prWins?' \u2713':''}</span></div>
+      <div class="cc-bar">
+        <div class="cc-bar-pr" style="width:${prPct}%"></div>
+        <div class="cc-bar-sf" style="width:${100-prPct}%"></div>
+      </div>
+      <div class="cc-winner">${prWins?'Priority wins':'SRTF wins'}</div>
+    `;
+    grid.appendChild(card);
+  });
+  const wtDiv = document.getElementById('wt-bars');
+  wtDiv.innerHTML = '';
+  const maxW = Math.max(...ps.map(p=>Math.max(prRes.wt[p.id],sfRes.wt[p.id])),1);
+  ps.forEach((p,i) => {
+    const c = PAL[i%PAL.length];
+    const prW = prRes.wt[p.id], sfW = sfRes.wt[p.id];
+    const row = document.createElement('div');
+    row.className = 'wt-row';
+    row.innerHTML = `
+      <div class="wt-name"><span class="clr" style="background:${c}"></span>PID ${p.id}</div>
+      <div class="wt-bar-row"><span class="wt-label" style="color:#c0392b">PR</span><div class="wt-track"><div class="wt-fill" style="width:${Math.round(prW/maxW*100)}%;background:#e74c3c"></div></div><span class="wt-val" style="color:#c0392b">${prW}</span></div>
+      <div class="wt-bar-row"><span class="wt-label" style="color:#1a5c8a">SF</span><div class="wt-track"><div class="wt-fill" style="width:${Math.round(sfW/maxW*100)}%;background:#2980b9"></div></div><span class="wt-val" style="color:#1a5c8a">${sfW}</span></div>
+    `;
+    wtDiv.appendChild(row);
+  });
+}
