@@ -572,3 +572,94 @@ td input.err {
     max-width: 260px;
     line-height: 1.6;
 }
+
+/* ─── Starvation Threshold Slider ─────────────────────────────────────── */
+.slider-group {
+    display: block;
+    margin-top: 8px;
+    padding: 10px 14px;
+    background: #fef9ec;
+    border: 1px solid #f0d090;
+    border-radius: 6px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.slider-group label {
+    color: #d68910;
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.starv-badge {
+    background: #e67e22;
+    color: #fff;
+    padding: 1px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-family: monospace;
+    font-weight: bold;
+    min-width: 36px;
+    text-align: center;
+}
+
+.slider-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.slider-lim {
+    font-size: 11px;
+    color: #999;
+    font-family: monospace;
+    min-width: 20px;
+    text-align: center;
+}
+
+.starv-slider {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 5px;
+    border-radius: 4px;
+    background: linear-gradient(to right, #27ae60, #f39c12, #e74c3c);
+    outline: none;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+    width: auto;
+}
+
+.starv-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #e67e22;
+    cursor: pointer;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+}
+
+.starv-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #e67e22;
+    cursor: pointer;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+}
+
+.slider-hint {
+    font-size: 11px;
+    color: #999;
+    margin-top: 6px;
+}
