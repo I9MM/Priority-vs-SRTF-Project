@@ -3,8 +3,8 @@
   Key Tasks: Scenario preparation (A, B, C), Comparison Tables, fair workload verification.
 */
 const PAL = [
-  '#e74c3c','#2980b9','#27ae60','#f39c12','#8e44ad',
-  '#16a085','#d35400','#2c3e50','#c0392b','#1a5276'
+  '#e74c3c', '#2980b9', '#27ae60', '#f39c12', '#8e44ad',
+  '#16a085', '#d35400', '#2c3e50', '#c0392b', '#1a5276'
 ];
 
 // ─── STATE ──────────────────────────────────────────────────────────────
@@ -21,32 +21,30 @@ const SC = {
     {at:5, bt:2, pri:5},
   ]},
   B: { prule:'lower', procs:[
-    {at:0, bt:12,pri:1},
-    {at:2, bt:2, pri:4},
-    {at:3, bt:3, pri:3},
-    {at:5, bt:1, pri:5},
+    {at:0, bt:12, pri:1},
+    {at:2, bt:2,  pri:4},
+    {at:3, bt:3,  pri:3},
+    {at:5, bt:1,  pri:5},
   ]},
   C: { prule:'lower', procs:[
-    {at:0, bt:3, pri:1},
-    {at:0, bt:3, pri:1},
-    {at:0, bt:3, pri:1},
-    {at:0, bt:10,pri:5},
-    {at:2, bt:3, pri:1},
+    {at: 0,  bt: 20, pri: 1},
+    {at: 20, bt: 20, pri: 1},
+    {at: 40, bt: 20, pri: 1},
+    {at: 0,  bt: 2,  pri: 10},
+    {at: 60, bt: 20, pri: 1},
   ]},
-
-   D: { prule:'lower', procs:[
-    {at:0,  bt:5,  pri:2.7},
-    {at:0,  bt:0,  pri:1},
-    {at:-1, bt:4,  pri:3},
-    {at:2,  bt:6,  pri:2},
+  D: { prule:'lower', procs:[
+    {at: 0,  bt: 5,  pri: 2},
+    {at: 0,  bt: 5,  pri: 1},
+    {at: 0,  bt: 4,  pri: 3},
+    {at: 2,  bt: 6,  pri: 2},
   ]}
-  
 };
 
 function loadSc(id, btn) {
   const s = SC[id];
   procs = []; pidCounter = 1;
-  s.procs.forEach(p => procs.push({id: pidCounter++, ...p}));
+  s.procs.forEach(p => procs.push({ id: pidCounter++, ...p }));
   renderTable();
   document.getElementById('results').style.display = 'none';
   document.getElementById('error-msg').innerText = '';
@@ -55,13 +53,15 @@ function loadSc(id, btn) {
 // ─── TABLE ──────────────────────────────────────────────────────────────
 // ─── MEMBER 1: UI/UX Developer -> Input Panel Logic ──────────────────
 function addProc() {
-  procs.push({id: pidCounter++, at:0, bt:5, pri:1});
+  procs.push({ id: pidCounter++, at: 0, bt: 5, pri: 1 });
   renderTable();
+  maybeRun();
 }
 
 function removeProc(idx) {
   procs.splice(idx, 1);
   renderTable();
+  maybeRun();
 }
 
 function clearAll() {
@@ -108,6 +108,14 @@ function upd(idx, field, val) {
       }
     }
   }
+  maybeRun();
+}
+
+function maybeRun() {
+  if (document.getElementById('results').style.display === 'block') {
+    const errs = validate();
+    if (errs.length === 0) runSim();
+  }
 }
 
 // ─── MEMBER 4: Gantt Chart & Validation -> Input Validation ──────────
@@ -115,45 +123,45 @@ function validate() {
   const errs = [];
   document.querySelectorAll('#ptbody input').forEach(el => el.classList.remove('err'));
   if (procs.length < 2) { errs.push('Need at least 2 processes.'); return errs; }
-  
+
   const pidSet = new Set();
   procs.forEach((p, i) => {
     const row = document.getElementById('ptbody').rows[i];
     const inputs = row.querySelectorAll('input');
     const elId = inputs[0], elAt = inputs[1], elBt = inputs[2], elPri = inputs[3];
 
-    if (isNaN(p.id) || !Number.isInteger(p.id) || p.id < 1) { 
-      errs.push(`PID must be a positive integer \u2265 1.`); 
-      if (elId) elId.classList.add('err'); 
+    if (isNaN(p.id) || !Number.isInteger(p.id) || p.id < 1) {
+      errs.push(`PID must be a positive integer \u2265 1.`);
+      if (elId) elId.classList.add('err');
     }
-    if (pidSet.has(p.id)) { 
-      errs.push(`Duplicate PID detected: ${p.id}`); 
-      if (elId) elId.classList.add('err'); 
+    if (pidSet.has(p.id)) {
+      errs.push(`Duplicate PID detected: ${p.id}`);
+      if (elId) elId.classList.add('err');
     }
     pidSet.add(p.id);
 
     if (isNaN(p.at)) {
-      errs.push(`Process ${i+1}: Arrival Time is missing or invalid.`);
+      errs.push(`Process ${i + 1}: Arrival Time is missing or invalid.`);
       if (elAt) elAt.classList.add('err');
-    } else if (!Number.isInteger(p.at) || p.at < 0) { 
-      errs.push(`Process ${i+1}: Arrival Time must be a non-negative integer.`); 
-      if (elAt) elAt.classList.add('err'); 
+    } else if (!Number.isInteger(p.at) || p.at < 0) {
+      errs.push(`Process ${i + 1}: Arrival Time must be a non-negative integer.`);
+      if (elAt) elAt.classList.add('err');
     }
 
     if (isNaN(p.bt)) {
-      errs.push(`Process ${i+1}: Burst Time is missing or invalid.`);
+      errs.push(`Process ${i + 1}: Burst Time is missing or invalid.`);
       if (elBt) elBt.classList.add('err');
-    } else if (!Number.isInteger(p.bt) || p.bt < 1) { 
-      errs.push(`Process ${i+1}: Burst Time must be a positive integer \u2265 1.`); 
-      if (elBt) elBt.classList.add('err'); 
+    } else if (!Number.isInteger(p.bt) || p.bt < 1) {
+      errs.push(`Process ${i + 1}: Burst Time must be a positive integer \u2265 1.`);
+      if (elBt) elBt.classList.add('err');
     }
 
     if (isNaN(p.pri)) {
-      errs.push(`Process ${i+1}: Priority is missing or invalid.`);
+      errs.push(`Process ${i + 1}: Priority is missing or invalid.`);
       if (elPri) elPri.classList.add('err');
-    } else if (!Number.isInteger(p.pri) || p.pri < 1) { 
-      errs.push(`Process ${i+1}: Priority must be a positive integer \u2265 1.`); 
-      if (elPri) elPri.classList.add('err'); 
+    } else if (!Number.isInteger(p.pri) || p.pri < 1) {
+      errs.push(`Process ${i + 1}: Priority must be a positive integer \u2265 1.`);
+      if (elPri) elPri.classList.add('err');
     }
   });
   return errs;
@@ -165,7 +173,7 @@ function simPriority(ps, rule, tieRule) {
   const gantt = [];
   const done = new Set();
   ps.forEach(p => rem[p.id] = p.bt);
-  
+
   let t = 0;
   let last = null;
   const totalBT = ps.reduce((s, p) => s + p.bt, 0);
@@ -173,7 +181,7 @@ function simPriority(ps, rule, tieRule) {
 
   while (done.size < ps.length && t < maxT) {
     const avail = ps.filter(p => p.at <= t && !done.has(p.id));
-    
+
     if (!avail.length) {
       const remaining = ps.filter(p => !done.has(p.id));
       const nextAt = Math.min(...remaining.map(p => p.at));
@@ -200,7 +208,7 @@ function simPriority(ps, rule, tieRule) {
 
     const p = avail[0];
     if (!(p.id in first)) first[p.id] = t;
-    
+
     if (last !== p.id) {
       gantt.push({ pid: p.id, start: t, end: t + 1 });
       last = p.id;
@@ -243,30 +251,30 @@ function simSRTF(ps) {
   const first = {}; const gantt = [];
   ps.forEach(p => rem[p.id] = p.bt);
   let t = 0; const done = new Set(); let last = null;
-  let maxT = ps.reduce((s,p)=>s+p.bt,0) + Math.max(...ps.map(p=>p.at)) + 10;
+  let maxT = ps.reduce((s, p) => s + p.bt, 0) + Math.max(...ps.map(p => p.at)) + 10;
   while (done.size < ps.length && t <= maxT) {
-    const avail = ps.filter(p => p.at<=t && !done.has(p.id));
+    const avail = ps.filter(p => p.at <= t && !done.has(p.id));
     if (!avail.length) {
-      const nextAt = Math.min(...ps.filter(p=>!done.has(p.id)).map(p=>p.at));
-      if (gantt.length && gantt[gantt.length-1].pid==='idle') gantt[gantt.length-1].end = nextAt;
-      else gantt.push({pid:'idle',start:t,end:nextAt});
-      t = nextAt; last=null; continue;
+      const nextAt = Math.min(...ps.filter(p => !done.has(p.id)).map(p => p.at));
+      if (gantt.length && gantt[gantt.length - 1].pid === 'idle') gantt[gantt.length - 1].end = nextAt;
+      else gantt.push({ pid: 'idle', start: t, end: nextAt });
+      t = nextAt; last = null; continue;
     }
-    avail.sort((a,b) => rem[a.id]-rem[b.id] || a.at-b.at || a.id-b.id);
+    avail.sort((a, b) => rem[a.id] - rem[b.id] || a.at - b.at || a.id - b.id);
     const p = avail[0];
     if (!(p.id in first)) first[p.id] = t;
-    if (last !== p.id) { gantt.push({pid:p.id,start:t,end:t+1}); last = p.id; }
-    else { gantt[gantt.length-1].end++; }
+    if (last !== p.id) { gantt.push({ pid: p.id, start: t, end: t + 1 }); last = p.id; }
+    else { gantt[gantt.length - 1].end++; }
     rem[p.id]--; t++;
-    if (rem[p.id]===0) { ft[p.id] = t; done.add(p.id); }
+    if (rem[p.id] === 0) { ft[p.id] = t; done.add(p.id); }
   }
   const merged = [];
   gantt.forEach(seg => {
-    if (merged.length && merged[merged.length-1].pid===seg.pid && merged[merged.length-1].end===seg.start) merged[merged.length-1].end = seg.end;
-    else merged.push({...seg});
+    if (merged.length && merged[merged.length - 1].pid === seg.pid && merged[merged.length - 1].end === seg.start) merged[merged.length - 1].end = seg.end;
+    else merged.push({ ...seg });
   });
-  ps.forEach(p => { rt[p.id]=first[p.id]-p.at; tat[p.id]=ft[p.id]-p.at; wt[p.id]=tat[p.id]-p.bt; });
-  return {gantt:merged,ft,wt,tat,rt};
+  ps.forEach(p => { rt[p.id] = first[p.id] - p.at; tat[p.id] = ft[p.id] - p.at; wt[p.id] = tat[p.id] - p.bt; });
+  return { gantt: merged, ft, wt, tat, rt };
 }
 
 // ─── MEMBER 4: Gantt Chart -> Visualization Logic ──────────────────
@@ -276,39 +284,39 @@ function renderGantt(gantt, ps, barId, ticksId, legId) {
   const legEl = document.getElementById(legId);
   bar.innerHTML = tksEl.innerHTML = legEl.innerHTML = '';
   const colors = {};
-  ps.forEach((p,i) => colors[p.id] = PAL[i%PAL.length]);
-  const total = gantt[gantt.length-1].end;
-  const scale = Math.max(30, Math.min(60, 800/total));
+  ps.forEach((p, i) => colors[p.id] = PAL[i % PAL.length]);
+  const total = gantt[gantt.length - 1].end;
+  const scale = Math.max(30, Math.min(60, 800 / total));
   let ticks = new Set();
   gantt.forEach(s => { ticks.add(s.start); ticks.add(s.end); });
-  ticks = [...ticks].sort((a,b)=>a-b);
+  ticks = [...ticks].sort((a, b) => a - b);
   gantt.forEach(seg => {
-    const w = (seg.end-seg.start)*scale;
+    const w = (seg.end - seg.start) * scale;
     const d = document.createElement('div');
-    d.className = 'gantt-block' + (seg.pid==='idle' ? ' idle' : '');
-    d.style.width = w+'px';
-    if (seg.pid!=='idle') d.style.backgroundColor = colors[seg.pid];
-    d.textContent = seg.pid!=='idle' ? seg.pid : '';
+    d.className = 'gantt-block' + (seg.pid === 'idle' ? ' idle' : '');
+    d.style.width = w + 'px';
+    if (seg.pid !== 'idle') d.style.backgroundColor = colors[seg.pid];
+    d.textContent = seg.pid !== 'idle' ? seg.pid : '';
     bar.appendChild(d);
   });
-  tksEl.style.width = (total*scale)+'px';
+  tksEl.style.width = (total * scale) + 'px';
   ticks.forEach(t => {
     const sp = document.createElement('span');
     sp.className = 'timeline-tick';
-    sp.style.left = (t*scale)+'px';
+    sp.style.left = (t * scale) + 'px';
     sp.style.direction = 'ltr';
     sp.setAttribute('lang', 'en');
     sp.style.fontFamily = 'Arial, sans-serif';
     sp.textContent = t.toString();
-    
+
     // Prevent clipping of the first tick by overflow-x: auto
     if (t === 0) {
       sp.style.transform = 'translateX(0)';
     }
-    
+
     tksEl.appendChild(sp);
   });
-  ps.forEach((p,i) => {
+  ps.forEach((p, i) => {
     const li = document.createElement('div');
     li.className = 'legend-item';
     li.innerHTML = `<span class="clr" style="background:${colors[p.id]}"></span>PID ${p.id} (pri:${p.pri}, bt:${p.bt})`;
@@ -324,21 +332,21 @@ function renderRTable(tableId, ps, res) {
     <th>FT</th><th>WT</th><th>TAT</th><th>RT</th>
   </tr></thead>`;
   const tb = document.createElement('tbody');
-  let sWT=0, sTAT=0, sRT=0;
+  let sWT = 0, sTAT = 0, sRT = 0;
   ps.forEach(p => {
-    sWT+=res.wt[p.id]; sTAT+=res.tat[p.id]; sRT+=res.rt[p.id];
+    sWT += res.wt[p.id]; sTAT += res.tat[p.id]; sRT += res.rt[p.id];
     const tr = document.createElement('tr');
     tr.innerHTML = `<td><strong>${p.id}</strong></td><td>${p.at}</td><td>${p.bt}</td><td>${p.pri}</td>
       <td>${res.ft[p.id]}</td><td>${res.wt[p.id]}</td><td>${res.tat[p.id]}</td><td>${res.rt[p.id]}</td>`;
     tb.appendChild(tr);
   });
   const n = ps.length;
-  const aWT=(sWT/n).toFixed(2), aTAT=(sTAT/n).toFixed(2), aRT=(sRT/n).toFixed(2);
+  const aWT = (sWT / n).toFixed(2), aTAT = (sTAT / n).toFixed(2), aRT = (sRT / n).toFixed(2);
   const ar = document.createElement('tr');
   ar.style.background = '#f1f2f6'; ar.style.fontWeight = 'bold';
   ar.innerHTML = `<td colspan="4">Average</td><td>\u2014</td><td>${aWT}</td><td>${aTAT}</td><td>${aRT}</td>`;
   tb.appendChild(ar); tbl.appendChild(tb);
-  return {avgWT:+aWT, avgTAT:+aTAT, avgRT:+aRT};
+  return { avgWT: +aWT, avgTAT: +aTAT, avgRT: +aRT };
 }
 
 // ─── MEMBER 5: Data Analyst -> Comparative Analysis Results Rendering ─
@@ -346,40 +354,40 @@ function renderCompare(ps, prAvg, sfAvg, prRes, sfRes) {
   const grid = document.getElementById('cmp-grid');
   grid.innerHTML = '';
   const metrics = [
-    {lbl:'AVG WAITING TIME', pr:prAvg.avgWT, sf:sfAvg.avgWT},
-    {lbl:'AVG TURNAROUND TIME', pr:prAvg.avgTAT, sf:sfAvg.avgTAT},
-    {lbl:'AVG RESPONSE TIME', pr:prAvg.avgRT, sf:sfAvg.avgRT},
+    { lbl: 'AVG WAITING TIME', pr: prAvg.avgWT, sf: sfAvg.avgWT },
+    { lbl: 'AVG TURNAROUND TIME', pr: prAvg.avgTAT, sf: sfAvg.avgTAT },
+    { lbl: 'AVG RESPONSE TIME', pr: prAvg.avgRT, sf: sfAvg.avgRT },
   ];
   metrics.forEach(m => {
     const prWins = m.pr <= m.sf;
-    const total = m.pr+m.sf||1;
-    const prPct = Math.round(m.sf/total*100);
+    const total = m.pr + m.sf || 1;
+    const prPct = Math.round(m.sf / total * 100);
     const card = document.createElement('div');
     card.className = 'cmp-card';
     card.innerHTML = `
       <div class="cc-lbl">${m.lbl}</div>
-      <div class="cc-row"><span class="cc-name">Priority</span><span class="cc-num cc-pr">${m.pr.toFixed(2)}${prWins?' \u2713':''}</span></div>
-      <div class="cc-row"><span class="cc-name">SRTF</span><span class="cc-num cc-sf">${m.sf.toFixed(2)}${!prWins?' \u2713':''}</span></div>
+      <div class="cc-row"><span class="cc-name">Priority</span><span class="cc-num cc-pr">${m.pr.toFixed(2)}${prWins ? ' \u2713' : ''}</span></div>
+      <div class="cc-row"><span class="cc-name">SRTF</span><span class="cc-num cc-sf">${m.sf.toFixed(2)}${!prWins ? ' \u2713' : ''}</span></div>
       <div class="cc-bar">
         <div class="cc-bar-pr" style="width:${prPct}%"></div>
-        <div class="cc-bar-sf" style="width:${100-prPct}%"></div>
+        <div class="cc-bar-sf" style="width:${100 - prPct}%"></div>
       </div>
-      <div class="cc-winner">${prWins?'Priority wins':'SRTF wins'}</div>
+      <div class="cc-winner">${prWins ? 'Priority wins' : 'SRTF wins'}</div>
     `;
     grid.appendChild(card);
   });
   const wtDiv = document.getElementById('wt-bars');
   wtDiv.innerHTML = '';
-  const maxW = Math.max(...ps.map(p=>Math.max(prRes.wt[p.id],sfRes.wt[p.id])),1);
-  ps.forEach((p,i) => {
-    const c = PAL[i%PAL.length];
+  const maxW = Math.max(...ps.map(p => Math.max(prRes.wt[p.id], sfRes.wt[p.id])), 1);
+  ps.forEach((p, i) => {
+    const c = PAL[i % PAL.length];
     const prW = prRes.wt[p.id], sfW = sfRes.wt[p.id];
     const row = document.createElement('div');
     row.className = 'wt-row';
     row.innerHTML = `
       <div class="wt-name"><span class="clr" style="background:${c}"></span>PID ${p.id}</div>
-      <div class="wt-bar-row"><span class="wt-label" style="color:#c0392b">PR</span><div class="wt-track"><div class="wt-fill" style="width:${Math.round(prW/maxW*100)}%;background:#e74c3c"></div></div><span class="wt-val" style="color:#c0392b">${prW}</span></div>
-      <div class="wt-bar-row"><span class="wt-label" style="color:#1a5c8a">SF</span><div class="wt-track"><div class="wt-fill" style="width:${Math.round(sfW/maxW*100)}%;background:#2980b9"></div></div><span class="wt-val" style="color:#1a5c8a">${sfW}</span></div>
+      <div class="wt-bar-row"><span class="wt-label" style="color:#c0392b">PR</span><div class="wt-track"><div class="wt-fill" style="width:${Math.round(prW / maxW * 100)}%;background:#e74c3c"></div></div><span class="wt-val" style="color:#c0392b">${prW}</span></div>
+      <div class="wt-bar-row"><span class="wt-label" style="color:#1a5c8a">SF</span><div class="wt-track"><div class="wt-fill" style="width:${Math.round(sfW / maxW * 100)}%;background:#2980b9"></div></div><span class="wt-val" style="color:#1a5c8a">${sfW}</span></div>
     `;
     wtDiv.appendChild(row);
   });
@@ -388,33 +396,38 @@ function renderCompare(ps, prAvg, sfAvg, prRes, sfRes) {
 // ─── ANALYSIS RENDER ─────────────────────────────────────────────────────
 // ─── MEMBER 6: Technical Writer & QA -> Analysis Questions & Conclusion ─
 function stdDev(arr) {
-  const m = arr.reduce((s,v)=>s+v,0)/arr.length;
-  return Math.sqrt(arr.reduce((s,v)=>s+(v-m)**2,0)/arr.length);
+  const m = arr.reduce((s, v) => s + v, 0) / arr.length;
+  return Math.sqrt(arr.reduce((s, v) => s + (v - m) ** 2, 0) / arr.length);
 }
 
 function renderAnalysis(ps, prRes, sfRes, prAvg, sfAvg, rule) {
   const ctr = document.getElementById('aq-container');
   ctr.innerHTML = '';
-  const prWTs = ps.map(p=>prRes.wt[p.id]);
+  const prWTs = ps.map(p => prRes.wt[p.id]);
   const prMean = prAvg.avgWT;
   const prMax = Math.max(...prWTs);
-  const starvation = prMax > prMean*2.5 && ps.length > 2;
-  const hiPriP = rule==='lower' ? ps.reduce((b,p)=>p.pri<b.pri?p:b) : ps.reduce((b,p)=>p.pri>b.pri?p:b);
-  const loPriP = rule==='lower' ? ps.reduce((b,p)=>p.pri>b.pri?p:b) : ps.reduce((b,p)=>p.pri<b.pri?p:b);
-  const shortP = ps.reduce((b,p)=>p.bt<b.bt?p:b);
+  const threshold = parseFloat(document.getElementById('starv-threshold')?.value ?? 2.5);
+  const starvation = prMax > prMean * threshold && ps.length > 2;
+  const hiPriP = rule === 'lower' ? ps.reduce((b, p) => p.pri < b.pri ? p : b) : ps.reduce((b, p) => p.pri > b.pri ? p : b);
+  const loPriP = rule === 'lower' ? ps.reduce((b, p) => p.pri > b.pri ? p : b) : ps.reduce((b, p) => p.pri < b.pri ? p : b);
+  const shortP = ps.reduce((b, p) => p.bt < b.bt ? p : b);
+
+  const q3Yes = prRes.rt[hiPriP.id] <= sfRes.rt[hiPriP.id];
+  const q4Yes = sfRes.ft[shortP.id] <= prRes.ft[shortP.id];
 
   const qs = [
-    {q: 'Which algorithm produced the lower average waiting time?', a: prAvg.avgWT <= sfAvg.avgWT ? `Priority Scheduling (${prAvg.avgWT.toFixed(2)})` : `SRTF (${sfAvg.avgWT.toFixed(2)})`},
-    {q: 'Did the Priority algorithm successfully benefit "urgent" processes?', a: `PID ${hiPriP.id} (High Priority) had a Response Time of ${prRes.rt[hiPriP.id]} vs PID ${loPriP.id} which had ${prRes.rt[loPriP.id]}.`},
-    {q: 'Which algorithm is better at handling a sudden short process?', a: `SRTF (Preemptive) is better as it can preempt long tasks for short ones. PID ${shortP.id} (Shortest) finished at T=${sfRes.ft[shortP.id]} in SRTF vs T=${prRes.ft[shortP.id]} in Priority.`},
-    {q: 'Is there a risk of starvation in the current scenario?', a: starvation ? `YES. PID ${loPriP.id} (Low Priority) waited ${prRes.wt[loPriP.id]} units, significantly longer than average.` : 'NO. Waiting times are relatively balanced.'}
+    { q: 'Which algorithm produced the lower average waiting time?', a: prAvg.avgWT <= sfAvg.avgWT ? `Priority Scheduling (${prAvg.avgWT.toFixed(2)})` : `SRTF (${sfAvg.avgWT.toFixed(2)})` },
+    { q: 'Which algorithm produced the lower average response time?', a: prAvg.avgRT <= sfAvg.avgRT ? `Priority Scheduling (${prAvg.avgRT.toFixed(2)})` : `SRTF (${sfAvg.avgRT.toFixed(2)})` },
+    { q: 'Did priority values improve treatment of urgent processes?', a: `${q3Yes ? 'YES' : 'NO'}. PID ${hiPriP.id} (Priority ${hiPriP.pri}) had a Response Time of ${prRes.rt[hiPriP.id]} in Priority vs ${sfRes.rt[hiPriP.id]} in SRTF.` },
+    { q: 'Did SRTF favor short jobs more aggressively?', a: `${q4Yes ? 'YES' : 'NO'}. PID ${shortP.id} (Burst ${shortP.bt}) finished at T=${sfRes.ft[shortP.id]} in SRTF vs T=${prRes.ft[shortP.id]} in Priority.` },
+    { q: 'Which algorithm would you recommend for this workload, and why?', a: starvation ? `SRTF is recommended to avoid the starvation of PID ${loPriP.id}.` : `Priority is recommended if "urgent" tasks must be guaranteed immediate CPU access.` }
   ];
 
   qs.forEach((item, i) => {
     const card = document.createElement('div');
     card.className = 'aq-card';
     card.innerHTML = `
-      <div class="aq-num">Q${i+1}</div>
+      <div class="aq-num">Q${i + 1}</div>
       <div class="aq-content">
         <div class="aq-q">${item.q}</div>
         <div class="aq-a">${item.a}</div>
@@ -429,15 +442,15 @@ function renderAnalysis(ps, prRes, sfRes, prAvg, sfAvg, rule) {
     <h3>SIMULATION CONCLUSION</h3>
     <div class="conc-item">
       <span class="conc-arrow">\u2192</span>
-      <span>In this specific scenario, <strong>${winA}</strong> was more efficient in terms of average waiting time.</span>
+      <span><strong>Efficiency:</strong> In this scenario, <strong>${winA}</strong> was more efficient in terms of average waiting time.</span>
     </div>
     <div class="conc-item">
       <span class="conc-arrow">\u2192</span>
-      <span><strong>Priority Scheduling</strong> allowed high-priority tasks to run first but ${starvation?'caused':'risked'} starvation for low-priority ones.</span>
+      <span><strong>Fairness:</strong> SRTF appeared fairer to shorter tasks, while Priority was "fairer" to urgent tasks but risked <strong>Starvation</strong>.</span>
     </div>
     <div class="conc-item">
-      <span class="conc-arrow">→</span>
-      <span><strong>SRTF</strong> minimized waiting time by always favoring shorter tasks, even if it required preemption.</span>
+      <span class="conc-arrow">\u2192</span>
+      <span><strong>Trade-off:</strong> The main trade-off observed is <strong>Policy-driven Urgency</strong> (Priority) versus <strong>Shortest-job Efficiency</strong> (SRTF).</span>
     </div>
   `;
   const warn = document.getElementById('pr-starv');
@@ -470,8 +483,16 @@ function runSim() {
 function goTab(name, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
-  document.getElementById('page-'+name).classList.add('active');
+  document.getElementById('page-' + name).classList.add('active');
   if (btn) btn.classList.add('active');
 }
 
 renderTable();
+
+document.getElementById('starv-threshold')?.addEventListener('input', function() {
+  const v = parseFloat(this.value).toFixed(1);
+  document.getElementById('starv-val').textContent = v + 'x';
+  const formula = document.getElementById('starv-formula');
+  if (formula) formula.textContent = v + '×';
+  maybeRun();
+});
