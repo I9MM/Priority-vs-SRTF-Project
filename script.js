@@ -27,17 +27,17 @@ const SC = {
     {at:5, bt:1,  pri:5},
   ]},
   C: { prule:'lower', procs:[
-    {at: 0,  bt: 20, pri: 1},
-    {at: 20, bt: 20, pri: 1},
-    {at: 40, bt: 20, pri: 1},
-    {at: 0,  bt: 2,  pri: 10},
-    {at: 60, bt: 20, pri: 1},
+    {at:0, bt:3, pri:1},
+    {at:1, bt:3, pri:1},
+    {at:2, bt:3, pri:1},
+    {at:0, bt:25, pri:5},
+    {at:4, bt:3, pri:1},
   ]},
   D: { prule:'lower', procs:[
-    {at: 0,  bt: 5,  pri: 2},
-    {at: 0,  bt: 5,  pri: 1},
-    {at: 0,  bt: 4,  pri: 3},
-    {at: 2,  bt: 6,  pri: 2},
+    {at:0,  bt:5,  pri:2.7},
+    {at:0,  bt:0,  pri:1},
+    {at:-1, bt:4,  pri:3},
+    {at:2,  bt:6,  pri:2},
   ]}
 };
 
