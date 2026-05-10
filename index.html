@@ -9,7 +9,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>C1 — Priority vs SRTF Scheduler</title>
-  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -36,15 +36,7 @@
         <label>Tie-Breaking Rule</label>
         <div style="font-size: 13px; font-weight: bold; color: #2c3e50; padding: 8px 0;">Arrival time (FCFS)</div>
       </div>
-      <div class="input-group slider-group">
-        <label>⚠ Starvation Threshold <span id="starv-val" class="starv-badge">2.5x</span></label>
-        <div class="slider-row">
-          <span class="slider-lim">1x</span>
-          <input type="range" id="starv-threshold" min="1" max="5" step="0.1" value="2.5" class="starv-slider">
-          <span class="slider-lim">5x</span>
-        </div>
-        <div class="slider-hint">Starvation triggers when max wait &gt; <strong id="starv-formula">2.5×</strong> average wait</div>
-      </div>
+      
     </div>
 
       <!-- Member 4: Input Validation Message Placeholder -->
