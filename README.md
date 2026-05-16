@@ -69,22 +69,13 @@ The simulator safely rejects the following:
 ## 4. Test Scenarios
 
 *   **Scenario A (Basic Mixed):** Evaluation of baseline behavior with varied inputs.
-    <br>*(Add screenshot here)*
-    <br><img src="./screenshots/scenario_a.png" alt="Scenario A Results" width="600">
 
 *   **Scenario B (Conflict):** High-priority long process vs. low-priority short process to show decision differences.
-    <br>*(Add screenshot here)*
-    <br><img src="./screenshots/scenario_b.png" alt="Scenario B Results" width="600">
 
 *   **Scenario C (Starvation-Sensitive):** Demonstrates the risk where one process waits much longer depending on the policy.
-    <br>*(Add screenshot here)*
-    <br><img src="./screenshots/scenario_c.png" alt="Scenario C Results" width="600">
 
 *   **Scenario D (Validation):** Demonstrates error handling for invalid data inputs.
-    <br>*(Add screenshot here)*
-    <br><img src="./screenshots/scenario_d.png" alt="Scenario D Results" width="600">
 
-> **💡 Note for the developer:** To display these images, create a folder named `screenshots` next to the `index.html` file. Take screenshots of each scenario while running the project in your browser, and save them as `scenario_a.png`, `scenario_b.png`, etc., inside that folder.
 
 ---
 
